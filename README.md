@@ -8,7 +8,7 @@
 ## 背景
 
 * 林野庁がG空間情報センターで公開する「国有林GISデータ（2025.3公開）」は、
-  一部が**簡易変換**（座標系の3パラメータ近似など）でJGD2000へ変換されています。
+  一部が**簡易変換**（座標系の3パラメータ近似）でJGD2000へ変換されています。
 * 正式な座標系変換（TKY2JGD.gsbによる格子補正）を行うには、
   いったん元のTOKYO系に戻し、再度TKY2JGDを適用する必要があります。
 
@@ -49,6 +49,7 @@
 
 ## 使い方（概要）
 
+使用にあたり、**tohka氏が公開している [TKY2JGD.gsb](https://github.com/tohka/JapanGridShift)** が別途必要となります。
 1. `/macro/ReTKY2JGD_batch_list.xlsm` を開き、対象ディレクトリを指定してバッチリストを生成
 2. QGISのモデルデザイナーでリストを読み込み、TKY2JGD.gsbを参照して変換実行
 3. `/data/` に出力された成果を確認
@@ -59,20 +60,23 @@
 
 ## 注意事項
 
-* 本リポジトリの補正結果は**測量成果としてそのまま使用することを想定していません**。
-  必ず現地測量や公式成果で確認してください。
-* TKY2JGD変換には**tohka氏公開の [TKY2JGD.gsb](https://github.com/tohka/TKY2JGD)** を利用しています。
-* TKY2JGDパラメータの著作権は国土地理院に帰属します。
+* 本リポジトリの補正結果は**日本測地系から世界測地系への変換のみを行う**ものであり、**測量成果としてそのまま使用することを想定していません**。
+ touhokutaiheiyouoki2011等のパラメータについては別途適用が必要となります。 また、使用にあたっては必ず現地測量や公式成果で確認してください。
+* 変換にあたっては、[TKY2JGD.gsb](https://github.com/tohka/JapanGridShift)** の注意事項についても併せてご確認ください。
+  
 
 ---
 
 ## ライセンス
 
-* データ: [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
+* Excelマクロデータ: [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
 
   * 元データ: 林野庁「国有林GISデータ（2025.3公開）」を本モデラーで変換
   * 改変: ReTKY2JGDプロジェクト
 * ソースコード: MIT License
+
+* TKY2JGDの[座標補正パラメータ](https://www.gsi.go.jp/sokuchikijun/sokuchikijun41012.html#zahyo)は[国土地理院コンテンツ利用規約](https://www.gsi.go.jp/kikakuchousei/kikakuchousei40182.html)に基づき国土地理院が公開しているデータです。
+
 
 ---
 
