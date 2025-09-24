@@ -31,8 +31,8 @@
 
 | パス                            | 内容                             |
 | ----------------------------- | ------------------------------ |
-| `/macro/QGIS_batch_list.xlsm` | QGISモデルデザイナー用Excelマクロ          |
-| `/data/corrected/`            | 補正後の国有林GISデータ（fgb） |
+| `/source/ReTKY2JGD_batch_list.xlsm` | QGISモデルデザイナー用Excelマクロ          |
+| `/data/            | 補正後の国有林GISデータ（fgb） |
 
 ---
 
@@ -45,9 +45,9 @@
 
 ## 使い方（概要）
 
-1. `/macro/QGIS_batch_list.xlsm` を開き、対象ディレクトリを指定してバッチリストを生成
+1. `/macro/ReTKY2JGD_batch_list.xlsm` を開き、対象ディレクトリを指定してバッチリストを生成
 2. QGISのモデルデザイナーでリストを読み込み、TKY2JGD.gsbを参照して変換実行
-3. `/data/corrected/` に出力された成果を確認
+3. `/data/` に出力された成果を確認
 
 ※詳細な操作手順は `docs/usage_guide.md` を参照してください。
 
