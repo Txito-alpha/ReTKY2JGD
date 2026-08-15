@@ -1,0 +1,15 @@
+[general]
+name=ReTKY2JGD
+qgisMinimumVersion=3.34
+qgisMaximumVersion=3.99
+version=1.3.0
+author=Txito
+email=
+description=簡易変換済みの日本測地系データを逆変換し、TKY2JGD.gsbでJGD2000平面直角座標へ再変換します。
+about=EPSG:2443から2461までの原点緯度・経度を対応表から選択し、明示的なPROJパイプラインで再変換します。
+category=Vector
+icon=icon.png
+experimental=False
+deprecated=False
+tracker=
+repository=
