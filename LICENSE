@@ -1,0 +1,45 @@
+MIT License
+
+Copyright (c) 2026 Txito
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+Third-party components and data
+
+This license applies to the source code of the ReTKY2JGD plugin only.
+
+1. TKY2JGD.gsb
+   The coordinate transformation grid file TKY2JGD.gsb is NOT included in this
+   package and is NOT covered by this license. It is published by the
+   Geospatial Information Authority of Japan (GSI) under the GSI content usage
+   terms. Obtain it directly from GSI and comply with those terms.
+   https://www.gsi.go.jp/sokuchikijun/sokuchikijun41012.html#zahyo
+   https://www.gsi.go.jp/kikakuchousei/kikakuchousei40182.html
+
+2. Data under data/reference/
+   Reference materials derived from the Forestry Agency of Japan's "National
+   Forest GIS data (published March 2025)", distributed through the G-Spatial
+   Information Center, are licensed under Creative Commons Attribution 4.0
+   International (CC BY 4.0).
+   Original data: Forestry Agency of Japan
+   https://www.geospatial.jp/ckan/dataset/a45
+   Adaptation: the ReTKY2JGD project
+   https://creativecommons.org/licenses/by/4.0/

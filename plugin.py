@@ -7,9 +7,9 @@ from qgis.PyQt.QtWidgets import (
     QAction, QApplication, QMessageBox, QProgressDialog, QToolBar
 )
 from qgis.core import (
-    Qgis, QgsApplication, QgsCoordinateReferenceSystem, QgsProcessingContext,
-    QgsProcessingException, QgsProcessingFeedback, QgsProject,
-    QgsVectorFileWriter, QgsVectorLayer
+    Qgis, QgsApplication, QgsCoordinateReferenceSystem, QgsMessageLog,
+    QgsProcessingContext, QgsProcessingException, QgsProcessingFeedback,
+    QgsProject, QgsVectorFileWriter, QgsVectorLayer
 )
 import processing
 
@@ -32,6 +32,14 @@ class ReTKY2JGDPlugin:
 
     def tr(self, text):
         return QCoreApplication.translate('ReTKY2JGD', text)
+
+    @staticmethod
+    def _log(message, level=Qgis.Warning):
+        """QGISのログメッセージパネルへ記録する。
+
+        処理を継続できる軽微な失敗は、握りつぶさずにここへ残す。
+        """
+        QgsMessageLog.logMessage(message, 'ReTKY2JGD', level)
 
     def initGui(self):
         icon = QIcon(os.path.join(self.plugin_dir, 'icon.png'))
@@ -188,14 +196,22 @@ class ReTKY2JGDPlugin:
             os.path.join(self.plugin_dir, 'data', 'TKY2JGD.gsb'),
             os.path.join(self.plugin_dir, 'data', 'tky2jgd.gsb'),
         ]
+        # PROJデータフォルダは環境によって取得できない場合がある。
+        # 取得できなくてもプラグインフォルダ内の候補で探索を続けられるため、
+        # 失敗はログに残したうえで処理を継続する。
         try:
             proj_path = QgsApplication.projPath()
-            candidates.extend([
-                os.path.join(proj_path, 'TKY2JGD.gsb'),
-                os.path.join(proj_path, 'tky2jgd.gsb'),
-            ])
-        except Exception:
-            pass
+        except (AttributeError, RuntimeError, TypeError) as exc:
+            self._log(
+                'PROJデータフォルダのパスを取得できませんでした。'
+                'プラグインフォルダ内のみを探索します。: {0}'.format(exc),
+                Qgis.Info)
+        else:
+            if proj_path:
+                candidates.extend([
+                    os.path.join(proj_path, 'TKY2JGD.gsb'),
+                    os.path.join(proj_path, 'tky2jgd.gsb'),
+                ])
         for path in candidates:
             if path and os.path.isfile(path):
                 return os.path.abspath(path).replace('\\', '/')
@@ -215,11 +231,15 @@ class ReTKY2JGDPlugin:
         stem = os.path.splitext(output)[0]
         for extension in ('.shp', '.shx', '.dbf', '.prj', '.cpg', '.qpj'):
             path = stem + extension
+            # 中断時の後始末のため、削除に失敗しても処理は続行する。
+            # 削除できなかったファイルはログに残し、利用者が確認できるようにする。
             try:
                 if os.path.exists(path):
                     os.remove(path)
-            except OSError:
-                pass
+            except OSError as exc:
+                ReTKY2JGDPlugin._log(
+                    '不完全な出力ファイルを削除できませんでした: {0} ({1})'.format(
+                        path, exc))
 
     def _write_output(self, layer_or_path, output, target_crs):
         layer = layer_or_path
@@ -303,29 +323,26 @@ class ReTKY2JGDPlugin:
             if feedback.isCanceled():
                 raise QgsProcessingException('処理がキャンセルされました。')
 
-        try:
-            update_progress(1, 'CRSを割り当てています')
-            assigned = processing.run('native:assignprojection', {
-                'INPUT': layer,
-                'CRS': target_crs,
-                'OUTPUT': 'TEMPORARY_OUTPUT',
-            }, context=context, feedback=feedback)
-            update_progress(2, 'Tokyo地理座標へ逆変換しています')
-            tokyo = processing.run('native:reprojectlayer', {
-                'INPUT': assigned['OUTPUT'],
-                'TARGET_CRS': tokyo_crs,
-                'OPERATION': reverse_pipeline,
-                'OUTPUT': 'TEMPORARY_OUTPUT',
-            }, context=context, feedback=feedback)
-            update_progress(3, 'TKY2JGDで再変換しています')
-            result = processing.run('native:reprojectlayer', {
-                'INPUT': tokyo['OUTPUT'],
-                'TARGET_CRS': target_crs,
-                'OPERATION': forward_pipeline,
-                'OUTPUT': 'TEMPORARY_OUTPUT',
-            }, context=context, feedback=feedback)
-        finally:
-            pass
+        update_progress(1, 'CRSを割り当てています')
+        assigned = processing.run('native:assignprojection', {
+            'INPUT': layer,
+            'CRS': target_crs,
+            'OUTPUT': 'TEMPORARY_OUTPUT',
+        }, context=context, feedback=feedback)
+        update_progress(2, 'Tokyo地理座標へ逆変換しています')
+        tokyo = processing.run('native:reprojectlayer', {
+            'INPUT': assigned['OUTPUT'],
+            'TARGET_CRS': tokyo_crs,
+            'OPERATION': reverse_pipeline,
+            'OUTPUT': 'TEMPORARY_OUTPUT',
+        }, context=context, feedback=feedback)
+        update_progress(3, 'TKY2JGDで再変換しています')
+        result = processing.run('native:reprojectlayer', {
+            'INPUT': tokyo['OUTPUT'],
+            'TARGET_CRS': target_crs,
+            'OPERATION': forward_pipeline,
+            'OUTPUT': 'TEMPORARY_OUTPUT',
+        }, context=context, feedback=feedback)
 
         if feedback.isCanceled():
             self._remove_shapefile_set(output)
