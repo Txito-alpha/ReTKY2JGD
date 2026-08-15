@@ -12,4 +12,4 @@ icon=icon.png
 experimental=False
 deprecated=False
 tracker=
-repository=
+repository=https://github.com/Txito-alpha/ReTKY2JGD
